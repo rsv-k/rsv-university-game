@@ -6,6 +6,7 @@ export default class parkMap {
 
     static objects = [];
     static userPigeons = [];
+    static computerPigeons = [];
 
     static expand() {
         parkMap.canvas.width = parkMap.w;

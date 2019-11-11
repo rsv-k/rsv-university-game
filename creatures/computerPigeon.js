@@ -1,7 +1,7 @@
 import Object from '../object.js';
 import parkMap from '../parkMap.js';
 
-export default class UserPigeon extends Object{
+export default class ComputerPigeon extends Object {
     constructor(width, height, color, name, gangMember = false) {
         super(width, height, color, name);
 
@@ -10,9 +10,9 @@ export default class UserPigeon extends Object{
 
         if (!this.gang.length && !gangMember) {
             this.destination = {
-                x1: this.coordinates.x1,
-                y1: this.coordinates.xy
-            }
+                x1: Math.random() * parkMap.w,
+                y1: Math.random() * parkMap.h
+            };
         }
     }
 
@@ -21,22 +21,27 @@ export default class UserPigeon extends Object{
         // coordinates of destination
         let x = this.gang[0].destination.x1; 
         let y = this.gang[0].destination.y1;
+
+
         
         const tx = x - this.coordinates.x1;
         const ty = y - this.coordinates.y1;
         const dist = Math.sqrt(tx * tx + ty * ty);
+
+        if (dist < 20) return this._setNewDestination();
 
         let velX = (tx / dist) * this.speed;
         let velY = (ty / dist) * this.speed;
 
         // prevent moving out of the park
         if (this.coordinates.x2 + this.speed >= parkMap.w && this.gang[0].destination.x1 - this.coordinates.x1 > 1) {
+            this._setNewDestination();
             velX = 0;
         }
         if (this.coordinates.y2 + this.speed >= parkMap.h && this.gang[0].destination.y1 - this.coordinates.y1 > 1) {
+            this._setNewDestination();
             velY = 0;
         }
-
         
         const info = this.isTouching();
         if (info.touching) {
@@ -47,6 +52,9 @@ export default class UserPigeon extends Object{
             if (info.touchingY2 || info.touchingY1) {
                 velY = 0;
             }
+
+        if (info.object && info.object.name.includes('Obstacle')) this._setNewDestination(info);
+
         }
         
         if (dist >= this.speed) {
@@ -58,7 +66,7 @@ export default class UserPigeon extends Object{
     isTouching() {
         const info = {
         }
-        const extraSpace = -2;
+        const extraSpace = 0;
         for (let i = 0; i < parkMap.objects.length; i++) {
             const object = parkMap.objects[i];
             if (object === this) continue;
@@ -91,9 +99,31 @@ export default class UserPigeon extends Object{
                 info.touchingY1 = true;
                 this.coordinates.y1 = info.object.coordinates.y2 + extraSpace;
             }
-            
+
+        }
+        
+        return info;
+    }
+
+    _setNewDestination(obstacle) {
+        if (!obstacle) {
+            this.gang[0].destination.y1 = Math.random() * parkMap.h;
+            this.gang[0].destination.x1 = Math.random() * parkMap.w;
+            return;
         }
 
-        return info;
+        if (!obstacle.object.name.includes('Obstacle')) return;
+
+        if (obstacle.touchingX2) {
+            this.gang[0].destination.x1 = Math.random() * obstacle.object.coordinates.x1;
+        } else if (obstacle.touchingX1) {
+            this.gang[0].destination.x1 = obstacle.object.coordinates.x2 + Math.random() * parkMap.w;
+        }
+        
+        if (obstacle.touchingY2) {
+            this.gang[0].destination.y1 = Math.random() * obstacle.object.coordinates.y1;
+        } else if (obstacle.touchingY1) {
+            this.gang[0].destination.y1 = obstacle.object.coordinates.y2 + Math.random() * parkMap.h;
+        }
     }
 }

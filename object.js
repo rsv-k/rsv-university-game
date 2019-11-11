@@ -1,10 +1,11 @@
 import parkMap from './parkMap.js';
 
 export default class Object {
-    constructor(width, height, color) {
+    constructor(width, height, color, name = 'Obstacle') {
         this.width = width;
         this.height = height;
         this.color = color;
+        this.name = name;
         this.coordinates = this._setNewCoordinates();
 
         this.center = {

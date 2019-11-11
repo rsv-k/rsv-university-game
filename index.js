@@ -1,6 +1,7 @@
 import parkMap from './parkMap.js';
 import Object from './object.js';
 import UserPigeon from './creatures/userPigeon.js';
+import ComputerPigeon from './creatures/computerPigeon.js';
 
 parkMap.expand();
 initObjects();
@@ -15,6 +16,7 @@ function animation() {
     
     parkMap.objects.forEach(object => object.draw());
     parkMap.userPigeons.forEach(object => object.move());
+    parkMap.computerPigeons.forEach(object => object.move());
 
     requestAnimationFrame(animation);
 }
@@ -22,10 +24,11 @@ animation();
 
 
 function initObjects() {
-    createFountains(1);
-    // createBenches(3);
-    // createStreetlight(3);
+    createFountains(3);
+    createBenches(3);
+    createStreetlight(3);
     createUserPigeon();
+    createComputerPigeon();
 }
 
 function createFountains(amount) {
@@ -59,8 +62,15 @@ function createStreetlight(amount) {
 }
 
 function createUserPigeon() {
-    let pigeon =  new UserPigeon(30, 30, '#fff');
+    let pigeon =  new UserPigeon(30, 30, '#fff', 'User pigeon');
     pigeon.gang.push(pigeon);
     parkMap.userPigeons.push(pigeon);
+    parkMap.objects.push(pigeon);
+}
+
+function createComputerPigeon() {
+    let pigeon = new ComputerPigeon(30, 30, 'ff0', 'Computer pigeon');
+    pigeon.gang.push(pigeon);
+    parkMap.computerPigeons.push(pigeon);
     parkMap.objects.push(pigeon);
 }
