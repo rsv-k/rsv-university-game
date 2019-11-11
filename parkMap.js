@@ -1,8 +1,8 @@
 export default class parkMap {
     static canvas = document.querySelector('canvas');
     static ctx = parkMap.canvas.getContext('2d');
-    static w = window.innerWidth;
-    static h = window.innerHeight;
+    static w = 3000;
+    static h = 3000;
 
     static objects = [];
     static userPigeons = [];

@@ -26,10 +26,8 @@ export default class ComputerPigeon extends Object {
         const ty = y - this.coordinates.y1;
         const dist = Math.sqrt(tx * tx + ty * ty);
 
-        if (dist < 10) {
-            return this._setNewDestination();
-        }
-
+        if (dist < 10) return this._setNewDestination();
+        
         let velX = (tx / dist) * this.speed;
         let velY = (ty / dist) * this.speed;
 
@@ -69,7 +67,6 @@ export default class ComputerPigeon extends Object {
             this.gang[0].destination.y1 = pigeon.center.y1;
         }
 
-        console.log(dist);
         if (dist >= this.speed) {
             this.coordinates.x1 += velX;
             this.coordinates.y1 += velY;

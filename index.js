@@ -13,8 +13,9 @@ parkMap.canvas.addEventListener('click', e => {
 });
 
 function animation() {
+    adjustMap();
     parkMap.ctx.clearRect(0, 0, parkMap.w, parkMap.h);
-    
+
     parkMap.objects.forEach(object => object.draw());
     parkMap.userPigeons.forEach(object => object.move());
     parkMap.computerPigeons.forEach(object => object.move());
@@ -28,12 +29,12 @@ animation();
 
 
 function initObjects() {
-    createFountains(3);
-    createBenches(3);
-    createStreetlight(3);
+    createFountains(20);
+    createBenches(20);
+    createStreetlight(20);
     createUserPigeon();
-    createComputerPigeons(1);
-    createNeutralPigeons(10);
+    createComputerPigeons(10);
+    createNeutralPigeons(30);
 }
 
 function createFountains(amount) {
@@ -98,4 +99,26 @@ function createNeutralPigeons(amount) {
         i++;
     }
     
+}
+
+function adjustMap() {
+    const pigeon = parkMap.userPigeons[0];
+    const x = pigeon.center.x1;
+    const y = pigeon.center.y1;
+
+    const center = {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2
+    }
+
+    let adjustX = x - center.x;
+    let adjustY = y - center.y;
+    
+    if (adjustX < 0) adjustX = 0;
+    else if (adjustX + window.innerWidth > parkMap.w) adjustX = parkMap.w - window.innerWidth;
+
+    if (adjustY < 0) adjustY = 0;
+    else if (adjustY + window.innerHeight > parkMap.h) adjustY = parkMap.h - window.innerHeight;
+
+    parkMap.canvas.style.transform = `translate(-${adjustX}px, -${adjustY}px)`;
 }
