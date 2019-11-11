@@ -29,9 +29,9 @@ animation();
 
 
 function initObjects() {
-    createFountains(20);
-    createBenches(20);
-    createStreetlight(20);
+    createFountains(25);
+    createBenches(25);
+    createStreetlight(25);
     createUserPigeon();
     createComputerPigeons(10);
     createNeutralPigeons(30);

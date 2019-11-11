@@ -21,28 +21,30 @@ export default class ComputerPigeon extends Object {
         // coordinates of destination
         let x = this.gang[0].destination.x1; 
         let y = this.gang[0].destination.y1;
-        
-        const tx = x - this.coordinates.x1;
-        const ty = y - this.coordinates.y1;
+
+        const tx = x - this.center.x1;
+        const ty = y - this.center.y1;
         const dist = Math.sqrt(tx * tx + ty * ty);
 
-        if (dist < 10) return this._setNewDestination();
+        if (dist < 5 * this.gang.length) return this.gang[0]._setNewDestination();
         
         let velX = (tx / dist) * this.speed;
         let velY = (ty / dist) * this.speed;
 
         // prevent moving out of the park
         if (this.coordinates.x2 + this.speed >= parkMap.w && this.gang[0].destination.x1 - this.coordinates.x1 > 1) {
-            this._setNewDestination();
+            this.gang[0]._setNewDestination();
             velX = 0;
         }
         if (this.coordinates.y2 + this.speed >= parkMap.h && this.gang[0].destination.y1 - this.coordinates.y1 > 1) {
-            this._setNewDestination();
+            this.gang[0]._setNewDestination();
             velY = 0;
         }
         
+        
         const info = this.isTouching();
         if (info.touching) {
+
             if (info.touchingX2 || info.touchingX1) {
                 velX = 0;
             } 
@@ -51,9 +53,10 @@ export default class ComputerPigeon extends Object {
                 velY = 0;
             }
 
-            if (info.object && info.object.name.includes('Obstacle')) this._setNewDestination(info);
+            if (info.object && info.object.name.includes('Obstacle')) this.gang[0]._setNewDestination(info);
         }
-
+        
+        
         for (let i = 0; i < parkMap.neutralPigeons.length; i++) {
             const pigeon = parkMap.neutralPigeons[i];
 
@@ -67,6 +70,7 @@ export default class ComputerPigeon extends Object {
             this.gang[0].destination.y1 = pigeon.center.y1;
         }
 
+        
         if (dist >= this.speed) {
             this.coordinates.x1 += velX;
             this.coordinates.y1 += velY;
@@ -74,8 +78,7 @@ export default class ComputerPigeon extends Object {
     }
 
     isTouching() {
-        const info = {
-        }
+        const info = {};
         
         for (let i = 0; i < parkMap.objects.length; i++) {
             const object = parkMap.objects[i];
@@ -94,7 +97,7 @@ export default class ComputerPigeon extends Object {
                 info.touchingX2 = true;
             }
             // top side of object
-            if (Math.abs(this.coordinates.y2 - object.coordinates.y1) < this.speed && this.gang[0].destination.y1 - this.coordinates.y1 > 1) {
+            else if (Math.abs(this.coordinates.y2 - object.coordinates.y1) < this.speed && this.gang[0].destination.y1 - this.coordinates.y1 > 1) {
                 info.touchingY2 = true;
             }
             // right side of object
@@ -102,7 +105,7 @@ export default class ComputerPigeon extends Object {
                 info.touchingX1 = true;
             }
             // top side of object
-            if (Math.abs(this.coordinates.y1 - object.coordinates.y2) < this.speed && this.gang[0].destination.y1 - this.coordinates.y2 < 1) {
+            else if (Math.abs(this.coordinates.y1 - object.coordinates.y2) < this.speed && this.gang[0].destination.y1 - this.coordinates.y2 < 1) {
                 info.touchingY1 = true;
             }
 
@@ -113,13 +116,14 @@ export default class ComputerPigeon extends Object {
 
     _setNewDestination(obstacle) {
         if (!obstacle) {
-            this.gang[0].destination.y1 = Math.random() * parkMap.h;
             this.gang[0].destination.x1 = Math.random() * parkMap.w;
+            this.gang[0].destination.y1 = Math.random() * parkMap.h;
             return;
         }
 
         if (!obstacle.object.name.includes('Obstacle')) return;
 
+        // when pigeon touches the object, set new reflected destination of relative coordinate
         if (obstacle.touchingX2) {
             this.coordinates.x1 = this.coordinates.x1;
             this.gang[0].destination.x1 = Math.random() * obstacle.object.coordinates.x1;
