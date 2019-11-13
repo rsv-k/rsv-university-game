@@ -7,17 +7,20 @@ export default class ComputerPigeon extends Object {
 
         this.speed = 5;
         this.gang = [];
+        this.hp = 100;
 
-        if (!this.gang.length && !gangMember) {
-            this.destination = {
-                x1: Math.random() * parkMap.w,
-                y1: Math.random() * parkMap.h
-            };
-        }
+        this.destination = {
+            x1: Math.random() * parkMap.w,
+            y1: Math.random() * parkMap.h
+        };
     }
 
     move() {
         this.draw();
+        this.showHP();
+
+        if (this.hp <= 0) return this.delete();
+
         // coordinates of destination
         let x = this.gang[0].destination.x1; 
         let y = this.gang[0].destination.y1;
@@ -41,7 +44,6 @@ export default class ComputerPigeon extends Object {
             velY = 0;
         }
         
-        
         const info = this.isTouching();
         if (info.touching) {
 
@@ -56,7 +58,8 @@ export default class ComputerPigeon extends Object {
             if (info.object && info.object.name.includes('Obstacle')) this.gang[0]._setNewDestination(info);
         }
         
-        
+
+        // search for neutral pigeons
         for (let i = 0; i < parkMap.neutralPigeons.length; i++) {
             const pigeon = parkMap.neutralPigeons[i];
 
@@ -68,6 +71,21 @@ export default class ComputerPigeon extends Object {
 
             this.gang[0].destination.x1 = pigeon.center.x1;
             this.gang[0].destination.y1 = pigeon.center.y1;
+        }
+
+        //search for bread
+
+        for (let i = 0; i < parkMap.breads.length; i++) {
+            const bread = parkMap.breads[i];
+            const tx = bread.center.x1 - this.center.x1;
+            const ty = bread.center.y1 - this.center.y1;
+            const dist = Math.sqrt(tx * tx + ty * ty);
+
+            if (dist > 120 || this.gang.every(p => p.hp === 100)) continue
+
+
+            this.gang[0].destination.x1 = bread.center.x1;
+            this.gang[0].destination.y1 = bread.center.y1;
         }
 
         
@@ -125,19 +143,34 @@ export default class ComputerPigeon extends Object {
 
         // when pigeon touches the object, set new reflected destination of relative coordinate
         if (obstacle.touchingX2) {
-            this.coordinates.x1 = this.coordinates.x1;
             this.gang[0].destination.x1 = Math.random() * obstacle.object.coordinates.x1;
         } else if (obstacle.touchingX1) {
-            this.coordinates.x1 = this.coordinates.x1;
             this.gang[0].destination.x1 = obstacle.object.coordinates.x2 + Math.random() * parkMap.w;
         }
         
         if (obstacle.touchingY2) {
-            this.coordinates.y1 = this.coordinates.y1;
             this.gang[0].destination.y1 = Math.random() * obstacle.object.coordinates.y1;
         } else if (obstacle.touchingY1) {
-            this.coordinates.y1 = this.coordinates.y1;
             this.gang[0].destination.y1 = obstacle.object.coordinates.y2 + Math.random() * parkMap.h;
         }
+    }
+
+    showHP() {
+        parkMap.ctx.fillStyle = 'red';
+        parkMap.ctx.fillRect(this.coordinates.x1, this.coordinates.y1 - 15, this.width, this.height / 3);
+
+        parkMap.ctx.fillStyle = 'green';
+        parkMap.ctx.fillRect(this.coordinates.x1, this.coordinates.y1 - 15, (this.hp / 100) * this.width, this.height / 3);
+    }
+
+    delete() {
+        const objectIndex = parkMap.objects.findIndex(pigeon => pigeon === this);
+        parkMap.objects.splice(objectIndex, 1);
+
+        const userindex = parkMap.computerPigeons.findIndex(pigeon => pigeon === this);
+        parkMap.computerPigeons.splice(userindex, 1);
+
+        const gangIndex = this.gang.findIndex(pigeon => pigeon === this);
+        this.gang.splice(gangIndex, 1);
     }
 }

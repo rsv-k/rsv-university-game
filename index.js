@@ -3,6 +3,7 @@ import Object from './object.js';
 import UserPigeon from './creatures/userPigeon.js';
 import ComputerPigeon from './creatures/computerPigeon.js';
 import NeutralPigeon from './creatures/neutralPigeon.js';
+import Human from './creatures/human.js';
 
 parkMap.expand();
 initObjects();
@@ -17,10 +18,18 @@ function animation() {
     parkMap.ctx.clearRect(0, 0, parkMap.w, parkMap.h);
 
     parkMap.objects.forEach(object => object.draw());
+    parkMap.breads.forEach(bread => {
+        bread.draw()
+        bread.isAnyOneAround();
+    });
+
     parkMap.userPigeons.forEach(object => object.move());
     parkMap.computerPigeons.forEach(object => object.move());
     parkMap.neutralPigeons.forEach(pigeon => {
         pigeon.isAnyoneAround();
+    })
+    parkMap.humans.forEach(human => {
+        human.move();
     })
 
     requestAnimationFrame(animation);
@@ -29,12 +38,14 @@ animation();
 
 
 function initObjects() {
+    createTownHall();
     createFountains(25);
     createBenches(25);
     createStreetlight(25);
     createUserPigeon();
     createComputerPigeons(10);
     createNeutralPigeons(30);
+    createHumans(8);
 }
 
 function createFountains(amount) {
@@ -65,6 +76,10 @@ function createStreetlight(amount) {
 
         parkMap.add(new Object(50, 50, 'red'));
     }
+}
+
+function createTownHall() {
+    parkMap.add(new Object(400, 400, 'red'));
 }
 
 function createUserPigeon() {
@@ -121,4 +136,13 @@ function adjustMap() {
     else if (adjustY + window.innerHeight > parkMap.h) adjustY = parkMap.h - window.innerHeight;
 
     parkMap.canvas.style.transform = `translate(-${adjustX}px, -${adjustY}px)`;
+}
+
+function createHumans(amount) {
+    let i = 0;
+
+    while (i < amount) {
+        parkMap.humans.push(new Human(40, 40, '#f55', 'Human'));
+        i++;
+    }
 }

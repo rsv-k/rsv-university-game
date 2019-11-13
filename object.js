@@ -44,6 +44,4 @@ export default class Object {
         parkMap.ctx.fillStyle = this.color;
         parkMap.ctx.fillRect(this.coordinates.x1, this.coordinates.y1, this.width, this.height);
     }
-
-    
 }

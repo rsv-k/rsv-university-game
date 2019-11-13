@@ -7,17 +7,20 @@ export default class UserPigeon extends Object{
 
         this.speed = 5;
         this.gang = [];
+        this.hp = 100;
 
-        if (!this.gang.length && !gangMember) {
-            this.destination = {
-                x1: this.coordinates.x1,
-                y1: this.coordinates.xy
-            }
+        this.destination = {
+            x1: this.coordinates.x1,
+            y1: this.coordinates.xy
         }
     }
 
     move() {
         this.draw();
+        this.showHP();
+        if (this.hp <= 0) return this.delete();
+        
+        
         // coordinates of destination
         let x = this.gang[0].destination.x1; 
         let y = this.gang[0].destination.y1;
@@ -90,5 +93,24 @@ export default class UserPigeon extends Object{
         }
 
         return info;
+    }
+
+    showHP() {
+        parkMap.ctx.fillStyle = 'red';
+        parkMap.ctx.fillRect(this.coordinates.x1, this.coordinates.y1 - 15, this.width, this.height / 3);
+
+        parkMap.ctx.fillStyle = 'green';
+        parkMap.ctx.fillRect(this.coordinates.x1, this.coordinates.y1 - 15, (this.hp / 100) * this.width, this.height / 3);
+    }
+
+    delete() {
+        const objectIndex = parkMap.objects.findIndex(pigeon => pigeon === this);
+        parkMap.objects.splice(objectIndex, 1);
+
+        const userindex = parkMap.userPigeons.findIndex(pigeon => pigeon === this);
+        parkMap.userPigeons.splice(userindex, 1);
+
+        const gangIndex = this.gang.findIndex(pigeon => pigeon === this);
+        this.gang.splice(gangIndex, 1);
     }
 }
