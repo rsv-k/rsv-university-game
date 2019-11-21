@@ -33,4 +33,18 @@ export default class parkMap {
             return true;
         });
     }
+
+    static isReservedTaken(a) {
+        return a.gang.some(b => {
+            if (a === b) return false;
+
+            // no horizontal overlap
+            if (a.currentCoordinates.x1 >= b.coordinates.x2 || b.coordinates.x1 >= a.currentCoordinates.x1 + a.width ) return false;
+
+            // no vertical overlap
+            if (a.currentCoordinates.y1 >= b.coordinates.x1 || b.coordinates.y1 >= a.currentCoordinates.y1 + a.height) return false;
+
+            return true;
+        });
+    }
 }

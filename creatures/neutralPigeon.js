@@ -11,7 +11,7 @@ export default class NeutralPigeon extends Object {
         this.timers = new Map();
         this.vX = 6;
         this.vY = 6;
-        this.falyAway = false;
+        this.flyAway = false;
 
     }
 

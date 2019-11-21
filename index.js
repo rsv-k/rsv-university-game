@@ -38,13 +38,13 @@ animation();
 
 
 function initObjects() {
-    createTownHall();
+    // createTownHall();
     createFountains(25);
     createBenches(25);
     createStreetlight(25);
     createUserPigeon();
     createComputerPigeons(10);
-    createNeutralPigeons(30);
+    createNeutralPigeons(40);
     createHumans(8);
 }
 
