@@ -44,6 +44,8 @@ export default class NeutralPigeon extends Object {
             }
             this._showProgressBar(timePassed);
 
+            if (this.takenBy.has(pigeon) && pigeon.hp <= 0 ) this.takenBy.delete(pigeon);
+
             if (timePassed >= 3) {
                 const random = Math.round(Math.random() * 2);
                 if (random === 0)  {
@@ -54,7 +56,6 @@ export default class NeutralPigeon extends Object {
                     this.flyaway = true;
                     return;
                 }
-
 
                 this._joinGang(pigeon);
             }

@@ -68,7 +68,7 @@ export default class Human extends Object {
         
         for (let i = 0; i < parkMap.objects.length; i++) {
             const object = parkMap.objects[i];
-            if (this.damagedPigeons.has(object) || object.name.includes('Neutral')) continue;
+            if (this.damagedPigeons.has(object) || object.name.includes('Neutral') || (object.attacking && object.attacking.who)) continue;
 
             // no horizontal overlap
             if (this.coordinates.x1 - this.speed >= object.coordinates.x2 || object.coordinates.x1 >= this.coordinates.x2 + this.speed) continue;

@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 html, body {
     width: 100%;
@@ -9,4 +10,43 @@ html, body {
 body {
     background: black;
     overflow: hidden;
+}
+
+.menu {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    height: 50vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    padding: 5% 10%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #fff;
+}
+
+.menu__play {
+    height: 100px;
+    top: 0;
+    background: #000;
+    color: #fff;
+    border: 0;
+    margin: auto;
+    width: 100%;
+    outline: 1px solid #fff;
+    transition: background .5s ease;
+    text-transform: uppercase;
+}
+.menu__play:hover {
+    background: rgb(12, 12, 12);
+}
+
+.menu__result {
+    margin: 0 auto;
+    color: #fff;
+    font-size: 3em;
+    margin-bottom: 50px;
+    display: none;
 }

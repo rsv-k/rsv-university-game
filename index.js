@@ -7,6 +7,7 @@ import Human from './creatures/human.js';
 
 parkMap.expand();
 initObjects();
+let stopGame = false;
 
 parkMap.canvas.addEventListener('click', e => {
     parkMap.userPigeons[0].destination.x1 = e.offsetX;
@@ -14,6 +15,7 @@ parkMap.canvas.addEventListener('click', e => {
 });
 
 function animation() {
+    if (stopGame) return;
     adjustMap();
     parkMap.ctx.clearRect(0, 0, parkMap.w, parkMap.h);
 
@@ -32,19 +34,38 @@ function animation() {
         human.move();
     })
 
+
+    // watch the result (win or lose)
+    if (parkMap.userPigeons.length === 0) {
+        stopGame = true;
+        const result = document.querySelector('.menu__result');
+        const play = document.querySelector('.menu__play');
+        document.querySelector('.menu').style.display = '';
+        result.style.display = 'block';
+        result.innerHTML = 'You lost!';
+        play.innerHTML = 'Play again';
+    }
+    else if (parkMap.computerPigeons.length === 0) {
+        stopGame = true;
+        const result = document.querySelector('.menu__result');
+        const play = document.querySelector('.menu__play');
+        document.querySelector('.menu').style.display = '';
+        result.style.display = 'block';
+        result.innerHTML = 'You won!';
+        play.innerHTML = 'Play again';
+    }
+    
     requestAnimationFrame(animation);
 }
-animation();
-
 
 function initObjects() {
-    // createTownHall();
+    createTownHall();
     createFountains(25);
     createBenches(25);
     createStreetlight(25);
     createUserPigeon();
-    createComputerPigeons(10);
-    createNeutralPigeons(40);
+    createComputerPigeons(1);
+    createNeutralPigeons(5);
     createHumans(8);
 }
 
@@ -146,3 +167,25 @@ function createHumans(amount) {
         i++;
     }
 }
+
+function clearAll() {
+    parkMap.objects = [];
+    parkMap.userPigeons = [];
+    parkMap.computerPigeons = [];
+    parkMap.neutralPigeons = [];
+    parkMap.humans = [];
+    parkMap.breads = [];
+}
+
+const buttonPlay = document.querySelector('.menu__play');
+buttonPlay.addEventListener('click', e => {
+    e.target.parentElement.style.display = 'none';
+    if (stopGame) {
+        stopGame = false;
+        clearAll();
+        initObjects();
+    }
+    
+
+    animation();
+});
